@@ -14,6 +14,7 @@ from modules import (
 
 logger = logging.getLogger(__name__)
 
+
 @register_model("descemb_bert")
 class BertTextEncoder(nn.Module):
     def __init__(self, args):
@@ -29,13 +30,13 @@ class BertTextEncoder(nn.Module):
                              'bert_mini': ["google/bert_uncased_L-4_H-256_A-4", 256],
                              'bert_small': ["google/bert_uncased_L-4_H-512_A-8", 512]}
 
-        if not args.init_bert_params:   #Loading Huggingface model with random initialized
+        if not args.init_bert_params:  # Loading Huggingface model with random initialized
             config = AutoConfig.from_pretrained(bert_model_config[args.bert_model][0])
             self.model = AutoModel.from_config(config)
         elif args.init_bert_params_with_freeze:
             with torch.no_grad():
                 self.model = AutoModel.from_pretrained(bert_model_config[args.bert_model][0])
-        else:  #Loading Huggingface model with pre-trained parameters
+        else:  # Loading Huggingface model with pre-trained parameters
             self.model = AutoModel.from_pretrained(bert_model_config[args.bert_model][0])
             self.model = nn.ModuleList(self.model, IdentityLayer())
 
@@ -44,7 +45,7 @@ class BertTextEncoder(nn.Module):
             self.mlm_proj = nn.Linear(bert_model_config[args.bert_model][1], 28996)
         self.post_encode_proj = nn.Linear(bert_model_config[args.bert_model][1], self.pred_embed_dim)
 
-        if args.value_embed_type =='DSVA_DPE':
+        if args.value_embed_type == 'DSVA_DPE':
             old_token_type_embeddings = self.model.embeddings.token_type_embeddings
             new_token_type_embeddings = self.model._get_resized_embeddings(old_token_type_embeddings, 28)
             self.model.embeddings.token_type_embeddings = new_token_type_embeddings
@@ -103,10 +104,11 @@ class BertTextEncoder(nn.Module):
         )
 
         if self.mlm_proj:
-            mlm_output = self.mlm_proj(bert_outputs[0]) # (B x S, W, H) -> (B x S, W, Bert-vocab)
+            mlm_output = self.mlm_proj(bert_outputs[0])  # (B x S, W, H) -> (B x S, W, Bert-vocab)
             return mlm_output
 
         return net_output
+
 
 @register_model("descemb_rnn")
 class RNNTextEncoder(nn.Module):
@@ -138,7 +140,7 @@ class RNNTextEncoder(nn.Module):
             self.value_embedding = nn.Embedding(28, self.enc_embed_dim)
 
         self.post_encode_proj = nn.Linear(self.enc_hidden_dim * 2, self.pred_embed_dim)
-    
+
         if not args.transfer and args.load_pretrained_weights:
             assert args.model_path, args.model_path
             logger.info(
@@ -192,7 +194,7 @@ class RNNTextEncoder(nn.Module):
 
         if self.value_embedding:
             x = x + type_ids
-        
+
         packed = pack_padded_sequence(x, lengths, batch_first=True, enforce_sorted=False)
         output, _ = self.model(packed)
         output_seq, _ = pad_packed_sequence(output, batch_first=True, padding_value=0)
@@ -203,7 +205,7 @@ class RNNTextEncoder(nn.Module):
             padding = mlm_output.new_zeros(mlm_output.size(0), diff_seq, mlm_output.size(2))
             mlm_output = torch.cat((mlm_output, padding), dim=1)
             return mlm_output
-        
+
         forward_output = output_seq[:, -1, :self.enc_hidden_dim]
         backward_output = output_seq[:, 0, self.enc_hidden_dim:]
         net_output = torch.cat((forward_output, backward_output), dim=-1)
