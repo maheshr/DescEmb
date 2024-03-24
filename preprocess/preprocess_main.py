@@ -108,6 +108,7 @@ def main():
     wd = os.getcwd()
     print('working directory .. : ', wd)
 
+    # M#: This was commented out. Rewrote it to run if the cohort pickle files do not exist.
     mimic_path = os.path.join(args.data_input_path, 'mimic')
     if not os.path.exists(os.path.join(mimic_path, 'mimic_cohort.pk')):
         create_MIMIC_dataset(mimic_path)
