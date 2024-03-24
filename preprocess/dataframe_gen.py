@@ -235,7 +235,7 @@ def sampling(sequence, walk_len, max_length):
 
 def sortbyoffset(df):
     print('sortbyoffset')
-    # M#: commented out groupby('ID') because it was causing an error where another groupby was happeneing
+    # M#: commented out groupby('ID') because it was causing an error where another groupby was happening
     # immediately after this function is called.
     sorted = df.sort_values(['code_offset'], ascending=True)    #.groupby('ID')
     return sorted
