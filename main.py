@@ -55,7 +55,8 @@ def get_parser():
 
     parser.add_argument(
         '--task',
-        choices=['readmission', 'mortality', 'los_3day', 'los_7day', 'diagnosis'],
+        # M#: added w2v to the list of choices
+        choices=['readmission', 'mortality', 'los_3day', 'los_7day', 'diagnosis', 'w2v'],
         type=str,
         default='readmission',
         help=""

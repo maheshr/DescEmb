@@ -15,13 +15,14 @@ from utils.trainer_utils import (
     should_stop_early
 )
 from datasets import (
-  Dataset,
-  TokenizedDataset,
-  MLMTokenizedDataset
+    Dataset,
+    TokenizedDataset,
+    MLMTokenizedDataset
 )
 import models
 
 logger = logging.getLogger(__name__)
+
 
 class Trainer(object):
     def __init__(self, args):
@@ -81,11 +82,11 @@ class Trainer(object):
 
         self.criterion = (
             nn.BCEWithLogitsLoss() if (
-                self.task not in ["mlm", "w2v"]
+                    self.task not in ["mlm", "w2v"]
             ) else nn.CrossEntropyLoss()
         )
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr)
-    
+
     def load_dataset(self, split: str):
         if self.task == 'mlm':
             dataset = MLMTokenizedDataset(
@@ -146,7 +147,7 @@ class Trainer(object):
                 self.optimizer.zero_grad(set_to_none=True)
 
                 net_output = self.model(**sample["net_input"])
-                #NOTE we assume self.model is wrapped by torch.nn.parallel.data_parallel.DataParallel
+                # NOTE we assume self.model is wrapped by torch.nn.parallel.data_parallel.DataParallel
                 logits = self.model.module.get_logits(net_output)
                 target = self.model.module.get_targets(sample).to(logits.device)
 
@@ -181,11 +182,11 @@ class Trainer(object):
             should_stop = self.validate_and_save(epoch, self.valid_subsets)
             if should_stop:
                 break
-        
+
     def validate(
-        self,
-        epoch,
-        valid_subsets
+            self,
+            epoch,
+            valid_subsets
     ):
         self.model.eval()
 
@@ -202,7 +203,7 @@ class Trainer(object):
             for sample in self.data_loaders[subset]:
                 with torch.no_grad():
                     net_output = self.model(**sample["net_input"])
-                    #NOTE we assume self.model is wrapped by torch.nn.parallel.data_parallel.DataParallel
+                    # NOTE we assume self.model is wrapped by torch.nn.parallel.data_parallel.DataParallel
                     logits = self.model.module.get_logits(net_output)
                     target = self.model.module.get_targets(sample).to(logits.device)
 
@@ -236,14 +237,14 @@ class Trainer(object):
         return valid_auprcs
 
     def validate_and_save(
-        self,
-        epoch,
-        valid_subsets
+            self,
+            epoch,
+            valid_subsets
     ):
         if (
-            self.disable_validation
-            or valid_subsets is None
-            or self.task in ['mlm', 'w2v']
+                self.disable_validation
+                or valid_subsets is None
+                or self.task in ['mlm', 'w2v']
         ):
             logger.info(
                 "Saving checkpoint to {}".format(
@@ -270,15 +271,15 @@ class Trainer(object):
 
         should_stop = False
 
-        #TODO add more options for validation (e.g. validate_metric, validate_interval, ...)
+        # TODO add more options for validation (e.g. validate_metric, validate_interval, ...)
         valid_auprcs = self.validate(epoch, valid_subsets)
         should_stop |= should_stop_early(self.patience, valid_auprcs[0])
 
         prev_best = getattr(should_stop_early, "best", None)
         if (
-            self.patience <= 0
-            or prev_best is None
-            or (prev_best and prev_best == valid_auprcs[0])
+                self.patience <= 0
+                or prev_best is None
+                or (prev_best and prev_best == valid_auprcs[0])
         ):
             logger.info(
                 "Saving checkpoint to {}".format(

@@ -383,7 +383,10 @@ class Word2VecDataset(BaseDataset):
             ratio,
     ):
         super().__init__(
-            self,
+            # M#: This is wrong.
+            # The super().__init__ shouldn't be passed self.
+            # Comment out the line below.
+            # self,
             input_path,
             data,
             eval_data,
