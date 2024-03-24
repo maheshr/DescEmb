@@ -23,7 +23,7 @@ First, download the dataset from these links:
 
 [icd10cmtoicd9gem](https://data.nber.org/gem/icd10cmtoicd9gem.csv)
 
-Second, make directory sturcture like below:
+Second, make directory structure like below:
 ```
 data_input_path
 ├─ mimic

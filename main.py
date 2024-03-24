@@ -4,22 +4,22 @@ import logging.config
 import random
 import os
 import sys
-
-# should setup root logger before importing any relevant libraries.
-logging.basicConfig(
-    format="%(asctime)s | %(levelname)s %(name)s %(message)s)))",
-    datefmt="%Y-%m-%d %H:%M:%S",
-    level = os.environ.get("LOGLEVEL", "INFO").upper(),
-    stream = sys.stdout
-)
-logger = logging.getLogger(__name__)
-
 import numpy as np
 
 import torch
 import torch.multiprocessing as mp
 
 from trainers import Trainer, Word2VecTrainer
+
+# should setup root logger before importing any relevant libraries.
+logging.basicConfig(
+    format="%(asctime)s | %(levelname)s %(name)s %(message)s)))",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    level=os.environ.get("LOGLEVEL", "INFO").upper(),
+    stream=sys.stdout
+)
+logger = logging.getLogger(__name__)
+
 
 def get_parser():
     parser = argparse.ArgumentParser()
@@ -35,9 +35,9 @@ def get_parser():
 
     parser.add_argument(
         '--patience', type=int, default=-1,
-        help= (
-            'early stop training if valid performance does not '
-            + 'improve for N consecutive validation runs'
+        help=(
+                'early stop training if valid performance does not '
+                + 'improve for N consecutive validation runs'
         )
     )
     parser.add_argument(
@@ -48,7 +48,8 @@ def get_parser():
     # dataset
     parser.add_argument('--data', choices=['mimic', 'eicu', 'pooled'], type=str, required=True)
     parser.add_argument('--eval_data', choices=['mimic', 'eicu', 'pooled'], type=str, default=None, required=False)
-    parser.add_argument('--value_embed_type', choices=['VA','DSVA','DSVA_DPE','VC', 'nonconcat'], default='nonconcat')
+    parser.add_argument('--value_embed_type', choices=['VA', 'DSVA', 'DSVA_DPE', 'VC', 'nonconcat'],
+                        default='nonconcat')
     parser.add_argument('--fold', type=str, default=None)
     parser.add_argument('--valid_subsets', type=str, default="valid, test")
 
@@ -62,11 +63,11 @@ def get_parser():
 
     # trainer
     parser.add_argument('--seed', type=int, default=2021)
-    parser.add_argument('--ratio', choices=['10', '30', '50', '70', '90', '100'], type=str, default= '100')
+    parser.add_argument('--ratio', choices=['10', '30', '50', '70', '90', '100'], type=str, default='100')
     parser.add_argument('--n_epochs', type=int, default=1000)
     parser.add_argument('--lr', type=float, default=1e-4)
     parser.add_argument('--batch_size', type=int, default=512)
-    
+
     # encoder model configs
     parser.add_argument('--enc_embed_dim', type=int, default=128)
     parser.add_argument('--enc_hidden_dim', type=int, default=256)
@@ -81,7 +82,6 @@ def get_parser():
     parser.add_argument('--mlm_prob', type=float, default=0.3)
     parser.add_argument('--load_pretrained_weights', action='store_true')
 
-    
     # for transfer
     parser.add_argument("--transfer", action="store_true")
 
@@ -93,12 +93,12 @@ def get_parser():
     parser.add_argument(
         '--embed_model', type=str, required=False,
         help='name of the encoder model in the --model, '
-            'only used when --model has encoder-predictor structure'
+             'only used when --model has encoder-predictor structure'
     )
     parser.add_argument(
         '--pred_model', type=str, required=False,
         help='name of the predictor model in the --model, '
-            'only used when --model has encoder-predictor structure'
+             'only used when --model has encoder-predictor structure'
     )
 
     parser.add_argument('--bert_model', choices=['bert', 'bert_tiny', 'bert_mini'], type=str, default='bert_tiny')
@@ -107,14 +107,15 @@ def get_parser():
 
     return parser
 
+
 def main():
     args = get_parser().parse_args()
     args.valid_subsets = (
-        args.valid_subsets.replace(' ','').split(',')
+        args.valid_subsets.replace(' ', '').split(',')
         if (
-            not args.disable_validation
-            and args.task not in ['mlm', 'w2v']
-            and args.valid_subsets
+                not args.disable_validation
+                and args.task not in ['mlm', 'w2v']
+                and args.valid_subsets
         )
         else []
     )
@@ -176,7 +177,7 @@ def set_struct(cfg: dict):
         },
         'root': {
             'level': 'INFO', 'handlers': ['console', 'file']
-            },
+        },
         'disable_existing_loggers': False
     }
     logging.config.dictConfig(job_logging_cfg)
