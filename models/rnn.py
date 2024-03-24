@@ -3,6 +3,7 @@ from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 
 from models import register_model
 
+
 @register_model("rnn")
 class RNNModel(nn.Module):
     def __init__(self, args):
@@ -44,7 +45,7 @@ class RNNModel(nn.Module):
 
     def pack_pad_seq(self, x, lengths):
         lengths = lengths.squeeze(-1).cpu()
-        
+
         packed = pack_padded_sequence(x, lengths, batch_first=True, enforce_sorted=False)
         output, _ = self.model(packed)
         output_seq, output_len = pad_packed_sequence(output, batch_first=True, padding_value=0)
