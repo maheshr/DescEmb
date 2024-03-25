@@ -78,7 +78,11 @@ class BaseDataset(torch.utils.data.Dataset):
         elif self.split == 'test':
             hit = 0
 
-        df = pd.read_csv(self.fold)
+        # adam fix read in pickle file 
+        pkl_path = self.input_path + "/" + self.data + "_df.pkl"
+        df = pd.read_pickle(pkl_path)
+
+        # df = pd.read_csv(self.fold)
         splits = df[self.task].values
         idcs = np.where(splits == hit)[0]
         return idcs
@@ -149,32 +153,57 @@ class Dataset(BaseDataset):
 
         self.sequential_lengths = None
 
-        self.value = np.load(
-            file=os.path.join(self.data_path, "value.npy")
-        )
-        self.value = self.value[hit_idcs]
+        # Adams fix 2
+        # TODO: need to select the value column if this works (ex. Mortality)
+        # self.value = np.load(
+        #     file=os.path.join(self.data_path, "value.npy")
+        # )
+        pkl_path = self.input_path + "/" + self.data + "_df.pkl"
+        self.value = pd.read_pickle(pkl_path)
+
+        self.value = self.value.iloc[hit_idcs,:]
 
         if self.data == 'pooled':
             self.input_idcs = np.load(
                 file=os.path.join(self.data_path, "pooled_input_index{}".format(self.ext)),
             )
         else:
-            self.input_idcs = np.load(
-                file=os.path.join(self.data_path, "{}_input_index{}".format(self.prefix, self.ext))
-            )
-        self.input_idcs = self.input_idcs[hit_idcs]
+            # Adams fix 3
 
-        self.sequential_lengths = np.load(
-            file=os.path.join(self.data_path, f"seq_len.npy"),
-        )
-        self.sequential_lengths = self.sequential_lengths[hit_idcs]
+            # self.input_idcs = np.load(
+            #     file=os.path.join(self.data_path, "{}_input_index{}".format(self.prefix, self.ext))
+            # )
 
-        self.label = np.load(
-            file=os.path.join(
-                self.label_path, "{}_{}_label.npy".format(self.prefix, self.task)
-            ).format(self.prefix, self.task),
-        )
-        self.label = torch.tensor(self.label[hit_idcs], dtype=torch.long)
+            pkl_path = self.input_path + "/" + self.data + "_df.pkl"
+            self.value = pd.read_pickle(pkl_path)
+
+            self.input_idcs = pd.read_pickle(pkl_path)
+
+        # self.input_idcs = self.input_idcs[hit_idcs]
+            self.input_idcs = self.input_idcs.iloc[hit_idcs,:]
+
+        # Adam fix 4
+            
+        # self.sequential_lengths = np.load(
+        #     file=os.path.join(self.data_path, f"seq_len.npy"),
+        # )
+        # self.sequential_lengths = self.sequential_lengths[hit_idcs]
+            
+        self.sequential_lengths = pd.read_pickle(pkl_path)
+        self.sequential_lengths = self.sequential_lengths.iloc[hit_idcs,:]["seq_len"]
+
+
+        # adam fix 5 
+
+        # self.label = np.load(
+        #     file=os.path.join(
+        #         self.label_path, "{}_{}_label.npy".format(self.prefix, self.task)
+        #     ).format(self.prefix, self.task),
+        # )
+        # self.label = torch.tensor(self.label[hit_idcs], dtype=torch.long)
+
+        self.label = pd.read_pickle(pkl_path)
+        self.label = self.label.iloc[hit_idcs, :][self.task]
 
         logger.info(f"loaded {len(self.input_idcs)} {self.split} samples")
 

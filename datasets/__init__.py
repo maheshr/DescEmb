@@ -5,8 +5,10 @@ from .dataset import (
     Word2VecDataset,
 )
 
+# Adam_update included Word2Vec datset in below list
 __all__ = [
     "Dataset",
     "TokenizedDataset",
-    "MLMTokenizedDataset"
+    "MLMTokenizedDataset",
+    "Word2VecDataset"
 ]

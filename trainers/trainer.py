@@ -128,8 +128,13 @@ class Trainer(object):
         else:
             raise NotImplementedError(self.model_type)
 
+        # Adam fix 6
+        # self.data_loaders[split] = DataLoader(
+        #     dataset, collate_fn=dataset.collator, batch_size=self.batch_size, num_workers=8, shuffle=True
+        # )
+
         self.data_loaders[split] = DataLoader(
-            dataset, collate_fn=dataset.collator, batch_size=self.batch_size, num_workers=8, shuffle=True
+            dataset.value, collate_fn=dataset.collator, batch_size=self.batch_size, num_workers=8, shuffle=True
         )
 
     def train(self):
