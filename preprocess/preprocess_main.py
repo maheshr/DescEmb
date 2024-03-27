@@ -1,7 +1,7 @@
 from create_dataset import create_MIMIC_dataset, create_eICU_dataset
 from dataframe_gen import preprocess
-# from numpy_convert import convert2numpy
-# from preprocess_utils import label_npy_file
+from numpy_convert import convert2numpy
+from preprocess_utils import label_npy_file
 import os
 import argparse
 
@@ -125,8 +125,8 @@ def main():
                args.max_length,
                args.data_type)
 
-    # convert2numpy(args.data_input_path, args.data_output_path)
-    # label_npy_file(args.data_input_path, args.data_output_path)
+    convert2numpy(args.data_input_path, args.data_output_path)
+    label_npy_file(args.data_input_path, args.data_output_path)
 
     print('preprocess finish!!')
 

@@ -18,7 +18,8 @@ def multi_hot(column):
 
 
 def label_npy_file(input_path, output_path):
-    columns_lst = ['readmission', 'mortality', 'los_3day', 'los_7day', 'diagnosis']
+    # M#: Diagnosis does not exist in the preprocessed dataset. It was commented out.
+    columns_lst = ['readmission', 'mortality', 'los_3day', 'los_7day']  # , 'diagnosis']
     for src in ['mimic', 'eicu', 'pooled']:
         filename = '{}_df.pkl'.format(src)
         df = pd.read_pickle(os.path.join(input_path, filename))
