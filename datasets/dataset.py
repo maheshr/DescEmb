@@ -59,8 +59,8 @@ class BaseDataset(torch.utils.data.Dataset):
             self.fold = fold
         else:
             self.fold = os.path.join(
-                self.input_path, "fold", "{}_{}_fold_split{}.csv".format(
-                    self.prefix, self.seed, self.ratio
+                self.input_path, "fold", "{}_{}_fold_{}{}.csv".format(
+                    self.prefix, self.seed, split, self.ratio
                 )
             )
 
@@ -79,8 +79,11 @@ class BaseDataset(torch.utils.data.Dataset):
             hit = 0
 
         df = pd.read_csv(self.fold)
-        splits = df[self.task].values
-        idcs = np.where(splits == hit)[0]
+
+        # splits = df[self.task].values
+        # idcs = np.where(splits == hit)[0]
+        idcs = df['index'].values
+
         return idcs
 
     def mask_tokens(self, inputs: torch.Tensor, special_tokens_mask: torch.Tensor):
@@ -92,12 +95,14 @@ class BaseDataset(torch.utils.data.Dataset):
         probability_matrix = torch.full(labels.shape, self.mlm_prob)
 
         if special_tokens_mask is None:
+            mask_list = [self.tokenizer.get_special_tokens_mask(
+                label, already_has_special_tokens=True
+            ) for label in labels.tolist()],
+
             special_tokens_mask = torch.tensor(
-                self.tokenizer.get_special_tokens_mask(
-                    labels, already_has_special_tokens=True
-                ),
+                mask_list,
                 dtype=torch.bool
-            )
+            ).squeeze()
         else:
             special_tokens_mask = special_tokens_mask.bool()
 
@@ -240,13 +245,13 @@ class TokenizedDataset(BaseDataset):
         self.sequential_lengths = None
 
         self.value = np.load(
-            file=os.path.join(self.data_path, "value.npy")
+            file=os.path.join(self.data_path, "value.npy"), allow_pickle=True
         )
         self.value = self.value[hit_idcs]
 
         self.input_ids, self.token_type_ids, self.attention_mask = (
             np.load(
-                file=os.path.join(self.data_path, f"{col}{self.ext}"),
+                file=os.path.join(self.data_path, f"{col}{self.ext}"), allow_pickle=True
             ) for col in col_names
         )
         self.input_ids = self.input_ids[hit_idcs]
@@ -255,13 +260,16 @@ class TokenizedDataset(BaseDataset):
 
         self.sequential_lengths = np.load(
             file=os.path.join(self.data_path, "seq_len.npy"),
+            allow_pickle=True
         )
         self.sequential_lengths = self.sequential_lengths[hit_idcs]
 
         self.label = np.load(
             file=os.path.join(
-                self.label_path, "{}_{}_label.npy".format(self.prefix, self.task)
-            ).format(self.prefix, self.task),
+                # self.label_path, "{}_{}_label.npy".format(self.prefix, self.task)
+                self.label_path, "{}_{}.npy".format(self.prefix, self.task)
+        ).format(self.prefix, self.task),
+            allow_pickle=True
         )
         self.label = torch.tensor(self.label[hit_idcs], dtype=torch.long)
 
@@ -276,7 +284,7 @@ class TokenizedDataset(BaseDataset):
         attn_mask = torch.LongTensor(self.attention_mask[index])
         seq_len = (torch.LongTensor(self.sequential_lengths).unsqueeze(-1)[index])
         label = torch.LongTensor(self.label).unsqueeze(-1)[index]
-        value = torch.Tensor(self.value[index])
+        value = torch.Tensor(self.value[index])  # ??? Why does this have empty strings and numbers as strings ???
 
         return {
             'input_ids': input_ids,
@@ -332,9 +340,14 @@ class MLMTokenizedDataset(BaseDataset):
 
         col_names = ['input_ids', 'token_type_ids', 'attention_mask']
 
+        # self.input_ids, self.token_type_ids, self.attention_mask = (
+        #     np.load(
+        #         file=os.path.join(self.data_path, f"{col}_unique_code.npy")
+        #     ) for col in col_names
+        # )
         self.input_ids, self.token_type_ids, self.attention_mask = (
             np.load(
-                file=os.path.join(self.data_path, f"{col}_unique_code.npy")
+                file=os.path.join(self.data_path, f"{col}_{value_embed_type}.npy"), allow_pickle=True
             ) for col in col_names
         )
         logger.info(f"loaded {len(self.input_ids)} {self.split} samples")

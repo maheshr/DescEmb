@@ -129,7 +129,7 @@ class Trainer(object):
             raise NotImplementedError(self.model_type)
 
         self.data_loaders[split] = DataLoader(
-            dataset, collate_fn=dataset.collator, batch_size=self.batch_size, num_workers=8, shuffle=True
+            dataset, collate_fn=dataset.collator, batch_size=self.batch_size, num_workers=0, shuffle=True
         )
 
     def train(self):

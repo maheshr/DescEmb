@@ -48,15 +48,15 @@ def get_parser():
     # dataset
     parser.add_argument('--data', choices=['mimic', 'eicu', 'pooled'], type=str, required=True)
     parser.add_argument('--eval_data', choices=['mimic', 'eicu', 'pooled'], type=str, default=None, required=False)
-    parser.add_argument('--value_embed_type', choices=['VA', 'DSVA', 'DSVA_DPE', 'VC', 'nonconcat'],
+    parser.add_argument('--value_embed_type', choices=['VA', 'DSVA', 'DSVA_DPE', 'VC', 'NV', 'nonconcat'],
                         default='nonconcat')
     parser.add_argument('--fold', type=str, default=None)
     parser.add_argument('--valid_subsets', type=str, default="valid, test")
 
     parser.add_argument(
         '--task',
-        # M#: added w2v to the list of choices
-        choices=['readmission', 'mortality', 'los_3day', 'los_7day', 'diagnosis', 'w2v'],
+        # M#: added w2v and mlm to the list of choices
+        choices=['readmission', 'mortality', 'los_3day', 'los_7day', 'diagnosis', 'w2v', 'mlm'],
         type=str,
         default='readmission',
         help=""
