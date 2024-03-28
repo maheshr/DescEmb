@@ -16,7 +16,7 @@ class Word2VecTrainer():
     def __init__(self, args):
         index_size_dict = {
             # M#: This was nonconcat, renamed to NV
-            'NV': {
+            'nonconcat': {
                 'mimic': 1889,
                 'eicu': 1534,
                 'both': 3223
@@ -40,6 +40,11 @@ class Word2VecTrainer():
                 'mimic': 3850,
                 'eicu': 4354,
                 'both': 8095
+            },
+            'NV': {
+                'mimic': 2762,
+                # 'eicu': 4354,
+                # 'both': 8095
             }
         }
 

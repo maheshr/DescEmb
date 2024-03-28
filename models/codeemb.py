@@ -18,6 +18,12 @@ class CodeEmb(nn.Module):
                 'eicu': 1534,
                 'pooled': 3223
             },
+            # M#: copied from w2v
+            'NV': {
+                'mimic': 2762,
+                # 'eicu': 1534,
+                # 'pooled': 3223
+            },
             'VA': {
                 'mimic': 70873,
                 'eicu': 34424,

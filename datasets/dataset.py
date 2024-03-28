@@ -155,7 +155,8 @@ class Dataset(BaseDataset):
         self.sequential_lengths = None
 
         self.value = np.load(
-            file=os.path.join(self.data_path, "value.npy")
+            file=os.path.join(self.data_path, "value.npy"),
+            allow_pickle=True
         )
         self.value = self.value[hit_idcs]
 
@@ -176,8 +177,9 @@ class Dataset(BaseDataset):
 
         self.label = np.load(
             file=os.path.join(
-                self.label_path, "{}_{}_label.npy".format(self.prefix, self.task)
+                self.label_path, "{}_{}.npy".format(self.prefix, self.task)
             ).format(self.prefix, self.task),
+            allow_pickle=True
         )
         self.label = torch.tensor(self.label[hit_idcs], dtype=torch.long)
 
@@ -190,7 +192,8 @@ class Dataset(BaseDataset):
         input_idcs = torch.LongTensor(self.input_idcs[index])
         seq_len = torch.LongTensor(self.sequential_lengths).unsqueeze(-1)[index]
         label = torch.LongTensor(self.label).unsqueeze(-1)[index]
-        value = torch.Tensor(self.value[index])
+        value = torch.Tensor([0 if type(x) == str else x for x in self.value[index]])
+        # value = torch.Tensor(self.value[index])
 
         return {
             'input_ids': input_idcs,
