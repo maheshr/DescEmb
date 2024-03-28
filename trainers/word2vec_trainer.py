@@ -15,7 +15,8 @@ logger = logging.getLogger(__name__)
 class Word2VecTrainer():
     def __init__(self, args):
         index_size_dict = {
-            'nonconcat': {
+            # M#: This was nonconcat, renamed to NV
+            'NV': {
                 'mimic': 1889,
                 'eicu': 1534,
                 'both': 3223

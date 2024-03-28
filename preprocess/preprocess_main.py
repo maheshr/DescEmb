@@ -109,21 +109,22 @@ def main():
     print('working directory .. : ', wd)
 
     # M#: This was commented out. Rewrote it to run if the cohort pickle files do not exist.
-    mimic_path = os.path.join(args.data_input_path, 'mimic')
-    if not os.path.exists(os.path.join(mimic_path, 'mimic_cohort.pk')):
-        create_MIMIC_dataset(mimic_path)
-    eicu_path = os.path.join(args.data_input_path, 'eicu')
-    if not os.path.exists(os.path.join(eicu_path, 'eicu_cohort.pk')):
-        create_eICU_dataset(eicu_path)
+    if False:
+        mimic_path = os.path.join(args.data_input_path, 'mimic')
+        if not os.path.exists(os.path.join(mimic_path, 'mimic_cohort.pk')):
+            create_MIMIC_dataset(mimic_path)
+        eicu_path = os.path.join(args.data_input_path, 'eicu')
+        if not os.path.exists(os.path.join(eicu_path, 'eicu_cohort.pk')):
+            create_eICU_dataset(eicu_path)
 
-    preprocess(args.data_input_path,
-               item_list,
-               csv_files_dict,
-               columns_map_dict,
-               issue_map,
-               mimic_def_file,
-               args.max_length,
-               args.data_type)
+        preprocess(args.data_input_path,
+                   item_list,
+                   csv_files_dict,
+                   columns_map_dict,
+                   issue_map,
+                   mimic_def_file,
+                   args.max_length,
+                   args.data_type)
 
     convert2numpy(args.data_input_path, args.data_output_path)
     label_npy_file(args.data_input_path, args.data_output_path)

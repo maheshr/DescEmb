@@ -1,0 +1,10 @@
+One Epoch of RNN with descemb_bert on mortality
+100%|██████████| 3239/3239 [01:15<00:00, 43.06it/s]
+[2024-03-27 21:55:18,964][train][INFO] - epoch: 1, loss: 0.605, auroc: 0.442, auprc: 0.064
+[2024-03-27 21:55:18,964][trainers.trainer][INFO] - begin validation on 'valid' subset
+[2024-03-27 21:55:28,215][valid][INFO] - epoch: 1, loss: 0.556, auroc: 0.430, auprc: 0.064
+[2024-03-27 21:55:28,215][trainers.trainer][INFO] - begin validation on 'test' subset
+[2024-03-27 21:55:37,493][test][INFO] - epoch: 1, loss: 1.109, auroc: 0.437, auprc: 0.064
+[2024-03-27 21:55:37,493][trainers.trainer][INFO] - Saving checkpoint to checkpoints\checkpoint_best.pt
+[2024-03-27 21:55:37,548][trainers.trainer][INFO] - Finished saving checkpoint to checkpoints\checkpoint_best.pt
+[2024-03-27 21:55:37,548][__main__][INFO] - done training

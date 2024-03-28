@@ -284,7 +284,8 @@ class TokenizedDataset(BaseDataset):
         attn_mask = torch.LongTensor(self.attention_mask[index])
         seq_len = (torch.LongTensor(self.sequential_lengths).unsqueeze(-1)[index])
         label = torch.LongTensor(self.label).unsqueeze(-1)[index]
-        value = torch.Tensor(self.value[index])  # ??? Why does this have empty strings and numbers as strings ???
+        value = torch.Tensor([0 if type(x) == str else x for x in self.value[index]])
+        # value = torch.Tensor(self.value[index])  # ??? Why does this have empty strings and numbers as strings ???
 
         return {
             'input_ids': input_ids,
@@ -438,10 +439,12 @@ class Word2VecDataset(BaseDataset):
 
     def indexing(self, data, dataname, seed):
         hit = 1
+        split_name = 'train'  # that's what we do for hit 1
 
-        df = pd.read_csv(os.path.join(self.path, 'fold', f'{dataname}_{seed}_fold_split.csv'))
-        splits = df[self.task].values
-        idcs = np.where(splits == hit)[0]
+        df = pd.read_csv(os.path.join(self.input_path, 'fold', f'{dataname}_{seed}_fold_{split_name}.csv'))
+        # splits = df[self.task].values
+        # idcs = np.where(splits == hit)[0]
+        idcs = df['index'].values
 
         data = data[idcs]
         return data

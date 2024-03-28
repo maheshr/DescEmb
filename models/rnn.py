@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 
@@ -45,6 +46,9 @@ class RNNModel(nn.Module):
 
     def pack_pad_seq(self, x, lengths):
         lengths = lengths.squeeze(-1).cpu()
+
+        max_len = x.shape[1]
+        lengths = torch.clamp(lengths, max=max_len)
 
         packed = pack_padded_sequence(x, lengths, batch_first=True, enforce_sorted=False)
         output, _ = self.model(packed)
