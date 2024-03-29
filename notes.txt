@@ -18,3 +18,14 @@ One Epoch of RNN with codeemb on mortality
 [2024-03-27 23:25:51,334][trainers.trainer][INFO] - Saving checkpoint to checkpoints\checkpoint_best.pt
 [2024-03-27 23:25:51,343][trainers.trainer][INFO] - Finished saving checkpoint to checkpoints\checkpoint_best.pt
 [2024-03-27 23:25:51,343][__main__][INFO] - done training
+
+Vocab Size
+MIMIC
+NV vocab size :  2762
+DSVA vocab size :  28566
+VC vocab size :  28566
+
+EICU
+NV vocab size :  2100
+DSVA vocab size :  130316
+VC vocab size :  130316
