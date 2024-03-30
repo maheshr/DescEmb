@@ -8,6 +8,7 @@ from contextlib import contextmanager
 
 logger = logging.getLogger(__name__)
 
+
 def should_stop_early(patience, valid_auprc: float) -> bool:
     if valid_auprc is None:
         return False
@@ -35,6 +36,7 @@ def should_stop_early(patience, valid_auprc: float) -> bool:
         else:
             return False
 
+
 @contextmanager
 def rename_logger(logger, new_name):
     old_name = logger.name
@@ -43,9 +45,11 @@ def rename_logger(logger, new_name):
     yield logger
     logger.name = old_name
 
+
 # legacy
 class EarlyStopping:
     """Early stops the training if validation loss doesn't improve after a given patience."""
+
     def __init__(self, patience=7, verbose=False, delta=0, trace_func=print):
         """
         Args:
@@ -67,8 +71,9 @@ class EarlyStopping:
         self.early_stop = False
         self.val_loss_min = 0
         self.delta = delta
-        #self.path = path
+        # self.path = path
         self.trace_func = trace_func
+
     def __call__(self, val_auroc):
 
         score = val_auroc
